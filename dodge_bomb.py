@@ -53,8 +53,8 @@ def gameover(screen: pg.Surface) -> None:
 def circle_size(bb_imgs: list):
     """
     引数：リスト
-    戻り値：円のタプルの入ったリスト
-    ｒごとの円の値をリストへ追加していく
+    戻り値：円の値の入ったタプルのリスト
+    ｒごとの円の値をタプルでまとめてリストへ追加していく
     """
     for r in range(1,11):
         bb_img  = pg.Surface((20*r, 20*r))
