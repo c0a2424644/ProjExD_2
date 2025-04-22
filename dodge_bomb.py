@@ -105,6 +105,7 @@ def main():
         #if key_lst[pg.K_RIGHT]:
             #sum_mv[0] += 5
         kk_rct.move_ip(sum_mv)
+        
         if check_bound(kk_rct) != (True, True):  # 画面外なら
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  # 画面内に戻す
         avx = vx*bb_accs[min(tmr//500, 9)]
