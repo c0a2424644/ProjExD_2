@@ -13,6 +13,7 @@ DELTA = {
     pg.K_LEFT: (-5, 0),
     pg.K_RIGHT: (+5, 0),
 }
+bb_accs = [a for a in range(1,11)]  # 加速度のリスト
 os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 def check_bound(rct: pg.Rect) -> tuple[bool, bool]:
@@ -37,17 +38,29 @@ def gameover(screen: pg.Surface) -> None:
     black_out_img = pg.Surface((WIDTH, HEIGHT))
     pg.draw.rect(black_out_img, (0, 0, 0), (0, 0, WIDTH, HEIGHT))
     black_out_img.set_alpha(200)
-    screen.blit(black_out_img,(0, 0))
     fonto = pg.font.Font(None, 80)
     txt = fonto.render("GameOver", True, (255, 255, 255))
-    screen.blit(txt, (400, 250))
     cry_kk_img = pg.image.load("fig/8.png")
-    
+
+    screen.blit(black_out_img,(0, 0))
+    screen.blit(txt, (400, 250))
     screen.blit(cry_kk_img,(330, 250))
     screen.blit(cry_kk_img,(720, 250))
     pg.display.update()
     time.sleep(5)
-    
+
+
+def circle_size(bb_imgs: list):
+    """
+    引数：リスト
+    戻り値：円のタプルの入ったリスト
+    ｒごとの円の値をリストへ追加していく
+    """
+    for r in range(1,11):
+        bb_img  = pg.Surface((20*r, 20*r))
+        pg.draw.circle(bb_img, (255, 0, 0), (10*r, 10*r), 10*r)
+        bb_imgs.append(bb_img)
+    return bb_imgs
     
 
 def main():
@@ -94,12 +107,18 @@ def main():
         kk_rct.move_ip(sum_mv)
         if check_bound(kk_rct) != (True, True):  # 画面外なら
             kk_rct.move_ip(-sum_mv[0], -sum_mv[1])  # 画面内に戻す
-        bb_rct.move_ip(vx, vy)
+        avx = vx*bb_accs[min(tmr//500, 9)]
+        avy = vy*bb_accs[min(tmr//500, 9)]
+        bb_imgs = []
+        circle_size(bb_imgs)  # 円の値のタプルを入れる
+        bb_rct.move_ip(avx, avy)
         yoko, tate = check_bound(bb_rct)
         if not yoko:  # 左右どちらかにはみ出ていたら
             vx *= -1
         if not tate:  # 上下土地らかにはみ出ていたら
             vy *= -1
+        bb_img = bb_imgs[min(tmr//500, 9)]
+        bb_img.set_colorkey((0, 0, 0))
         screen.blit(kk_img, kk_rct)
         screen.blit(bb_img, bb_rct)
         pg.display.update()
